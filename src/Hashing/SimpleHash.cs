@@ -7,7 +7,7 @@
     {
         private const int HASH_SIZE = 8; // 64 bit
 
-        public static byte[] Create(string plaintext)
+        public static byte[] Create(string plaintext, bool verbose = false)
         {
             // initialize the hash to a properly sized byte array
             var hash = new byte[HASH_SIZE];
@@ -27,11 +27,11 @@
                 // xor the new chunk with the existing hash
                 var newHash = Xor(hash, chunk);
 
-                Console.WriteLine($"{BitConverter.ToString(hash)}\tXOR\t{BitConverter.ToString(chunk)}\t=\t{BitConverter.ToString(newHash)}");
+                if (verbose) Console.WriteLine($"{BitConverter.ToString(hash)}\tXOR\t{BitConverter.ToString(chunk)}\t=\t{BitConverter.ToString(newHash)}");
                 hash = newHash;
             }
 
-            Console.WriteLine($"Computed Hash: {BitConverter.ToString(hash)}\tBase 64: {Convert.ToBase64String(hash)}");
+            if (verbose) Console.WriteLine($"Computed Hash: {BitConverter.ToString(hash)}\tBase 64: {Convert.ToBase64String(hash)}");
             return hash;
         }
 
