@@ -31,7 +31,6 @@
                 hash = newHash;
             }
 
-            if (verbose) Console.WriteLine($"Computed Hash: {BitConverter.ToString(hash)}\tBase 64: {Convert.ToBase64String(hash)}");
             return hash;
         }
 

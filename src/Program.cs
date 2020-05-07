@@ -3,39 +3,66 @@
     using Cryptography.Hashing;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using Utility.CommandLine;
 
     class Program
     {
-        static void Log(string s) => Console.WriteLine(s);
-        static void Section(string s) => Console.WriteLine($"-------------------------\n{s}\n");
+        [Operands]
+        private static List<string> Operands { get; set; }
+
+        static void Log(string s = "") => Console.WriteLine(s);
         
         static void Main(string[] args)
         {
-            var input = string.Join(" ", args);
-            input = string.IsNullOrEmpty(input) ? "Hello, World!" : input;
-            
-            Log($"\nInput: {input}\n");
+            Arguments.Populate();
 
-            Section("Simple Hash");
+            string command = "simple-hash";
+            string input = "Hello, World!";
 
-            var simple = SimpleHash.Create(input, verbose: true);
-
-            Section("Simple Salted Hash");
-
-            var simpleSalted = new List<byte[]>();
-
-            for (int i = 0; i < 5; i++)
+            if (Operands.Count > 1)
             {
-                simpleSalted.Add(SimpleSaltedHash.Create(input));
+                command = Operands[1];
             }
 
-            simpleSalted.ForEach(s => Console.WriteLine($"Simple Salted Hash: {Convert.ToBase64String(s)}"));
-            
-            Section("Simple Salted Hash Validation");
-
-            foreach (var hash in simpleSalted)
+            if (Operands.Count > 2)
             {
-                Console.WriteLine($"Hash: {Convert.ToBase64String(hash)}\tValid: {SimpleSaltedHash.Verify(hash, input)}");
+                input = string.Join(" ", Operands.Skip(2));
+            }
+
+            Log();
+
+            switch (command)
+            {
+                case "simple-hash":
+                    {
+                        var hash = SimpleHash.Create(input, verbose: true);
+                        Log($"Hex: {hash.Hex()}");
+                        Log($"Base64: {hash.Base64()}");
+                        return;
+                    }
+                case "simple-salted-hash":
+                    {
+                        var simpleSalted = new List<byte[]>();
+
+                        for (int i = 0; i < 5; i++)
+                        {
+                            simpleSalted.Add(SimpleSaltedHash.Create(input));
+                        }
+
+                        simpleSalted.ForEach(s => Console.WriteLine($"Simple Salted Hash: {Convert.ToBase64String(s)}"));
+
+                        Log();
+
+                        foreach (var hash in simpleSalted)
+                        {
+                            Console.WriteLine($"Hash: {Convert.ToBase64String(hash)}\tValid: {SimpleSaltedHash.Verify(hash, input)}");
+                        }
+                        return;
+                    }
+                default:
+                    Log($"Unknown command {command}");
+                    return;
             }
         }
     }
