@@ -1,6 +1,7 @@
 ﻿namespace Cryptography
 {
     using Cryptography.Hashing;
+    using Cryptography.Jwt;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -43,18 +44,18 @@
                     }
                 case "simple-salted-hash":
                     {
-                        var simpleSalted = new List<byte[]>();
+                        var hashes = new List<byte[]>();
 
                         for (int i = 0; i < 5; i++)
                         {
-                            simpleSalted.Add(SimpleSaltedHash.Create(input));
+                            hashes.Add(SimpleSaltedHash.Create(input));
                         }
 
-                        simpleSalted.ForEach(s => Log($"Simple Salted Hash: {s.Base64()}"));
+                        hashes.ForEach(s => Log($"Simple Salted Hash: {s.Base64()}"));
 
                         Log();
 
-                        foreach (var hash in simpleSalted)
+                        foreach (var hash in hashes)
                         {
                             Log($"Hash: {hash.Base64()}\tValid: {SimpleSaltedHash.Verify(hash, input)}");
                         }
@@ -89,6 +90,15 @@
                         {
                             Log($"Hash: {hash.Base64()}\tValid: {PasswordHasher.VerifyPassword(input, hash)}");
                         }
+
+                        return;
+                    }
+                case "jwt":
+                    {
+                        var (jwt, secret) = JsonWebToken.GetJwt(input);
+
+                        Log($"JWT: {jwt}");
+                        Log($"Secret Base64: {secret.Base64()}");
 
                         return;
                     }
