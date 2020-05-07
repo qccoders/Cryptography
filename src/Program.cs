@@ -50,13 +50,13 @@
                             simpleSalted.Add(SimpleSaltedHash.Create(input));
                         }
 
-                        simpleSalted.ForEach(s => Console.WriteLine($"Simple Salted Hash: {Convert.ToBase64String(s)}"));
+                        simpleSalted.ForEach(s => Log($"Simple Salted Hash: {s.Base64()}"));
 
                         Log();
 
                         foreach (var hash in simpleSalted)
                         {
-                            Console.WriteLine($"Hash: {Convert.ToBase64String(hash)}\tValid: {SimpleSaltedHash.Verify(hash, input)}");
+                            Log($"Hash: {hash.Base64()}\tValid: {SimpleSaltedHash.Verify(hash, input)}");
                         }
                         return;
                     }
@@ -70,6 +70,26 @@
                         Log($"SHA1: {input.Sha1()}");
                         Log($"SHA256: {input.Sha256()}");
                         Log($"SHA512: {input.Sha512()}");
+                        return;
+                    }
+                case "hash-password":
+                    {
+                        var hashes = new List<byte[]>();
+
+                        for (int i = 0; i < 5; i++)
+                        {
+                            hashes.Add(PasswordHasher.HashPassword(input));
+                        }
+
+                        hashes.ForEach(s => Log($"Password Hash: {s.Base64()}"));
+
+                        Log();
+
+                        foreach (var hash in hashes)
+                        {
+                            Log($"Hash: {hash.Base64()}\tValid: {PasswordHasher.VerifyPassword(input, hash)}");
+                        }
+
                         return;
                     }
                 default:
