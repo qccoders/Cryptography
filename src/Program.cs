@@ -1,5 +1,6 @@
 ﻿namespace Cryptography
 {
+    using Cryptography.Aes;
     using Cryptography.Hashing;
     using Cryptography.Jwt;
     using System;
@@ -9,6 +10,8 @@
 
     class Program
     {
+        [Argument('p', "password")]
+        private static string Password { get; set; }
         [Operands]
         private static List<string> Operands { get; set; }
 
@@ -100,6 +103,19 @@
                         Log($"JWT: {jwt}");
                         Log($"Secret Base64: {secret.Base64()}");
 
+                        return;
+                    }
+                case "aes":
+                    {
+                        Password = Password ?? throw new ArgumentException("password");
+
+                        var cipherWithIVAndSalt = AesEncryption.Encrypt(input, Password);
+
+                        Log($"Encrypted: {cipherWithIVAndSalt.Base64()}");
+
+                        Log();
+
+                        Log($"Decrypted: {AesEncryption.Decrypt(cipherWithIVAndSalt, Password)}");
                         return;
                     }
                 default:
