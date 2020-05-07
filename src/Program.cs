@@ -60,6 +60,18 @@
                         }
                         return;
                     }
+                case "md5":
+                    {
+                        Log($"MD5: {input.Md5()}");
+                        return;
+                    }
+                case "sha":
+                    {
+                        Log($"SHA1: {input.Sha1()}");
+                        Log($"SHA256: {input.Sha256()}");
+                        Log($"SHA512: {input.Sha512()}");
+                        return;
+                    }
                 default:
                     Log($"Unknown command {command}");
                     return;
